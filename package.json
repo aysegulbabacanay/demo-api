@@ -1,0 +1,8 @@
+{
+  "name": "demo-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Deniz Acay",
+  "license": "MIT",
+  "private": false
+}
