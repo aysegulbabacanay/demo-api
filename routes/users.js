@@ -36,10 +36,6 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /users/:userId
- */
-
-/**
  * POST /users/
  */
 router.post('/', async (req, res) => {
@@ -63,6 +59,33 @@ router.post('/', async (req, res) => {
 
         res.status(201).json({
             success: true
+        })
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            error: err
+        })
+    }
+})
+
+/**
+ * GET /users/:userId
+ */
+router.get('/:userId', async (req, res) => {
+
+    let { userId } = req.params;
+
+    try {
+
+        let row = await db('users').where('id', userId).first();
+
+        res.json({
+            success: true,
+            data: _.omit(row, 'password')
         })
 
     } catch(err) {
