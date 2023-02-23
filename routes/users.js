@@ -99,4 +99,34 @@ router.get('/:userId', async (req, res) => {
     }
 })
 
+/**
+ * DELETE /users/:userId
+ */
+router.delete('/:userId', async (req, res) => {
+
+    let { userId } = req.params;
+
+    try {
+
+        await db('users').where('id', userId).delete();
+
+        res.json({
+            success: true
+        })
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            error: err
+        })
+    }
+})
+
+/**
+ * POST /users/login
+ */
+
 module.exports = router;
