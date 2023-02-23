@@ -163,3 +163,5 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 
 dev.sqlite3
+backend/public/**
+**/.DS_Store

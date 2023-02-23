@@ -2,6 +2,13 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
 
+    // Bunu gormezden gelin - Baslangic
+
+    if (req.method === 'OPTIONS')
+        return next();
+
+    // Bunu gormezden gelin - Kapanis
+
     let authHeader = req.headers['authorization'];
 
     if (!authHeader) {
