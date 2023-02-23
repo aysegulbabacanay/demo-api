@@ -8,11 +8,15 @@ const router = express.Router();
 
 const db = require('../dbConfig');
 
+const requireAuth = require('../middlewares/auth');
+
+// Bu sekilde kullanirsak bu router'daki tum endpoint'lere uyguluyor, biz login'e uygulanmasini istemiyoruz
+// router.use(requireAuth);
+
 /**
  * GET /users/
  */
-router.get('/', async (req, res) => {
-
+router.get('/', requireAuth, async (req, res) => {
 
     try {
 
@@ -76,7 +80,7 @@ router.post('/', async (req, res) => {
 /**
  * GET /users/:userId
  */
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', requireAuth, async (req, res) => {
 
     let { userId } = req.params;
 
@@ -103,7 +107,7 @@ router.get('/:userId', async (req, res) => {
 /**
  * DELETE /users/:userId
  */
-router.delete('/:userId', async (req, res) => {
+router.delete('/:userId', requireAuth, async (req, res) => {
 
     let { userId } = req.params;
 
