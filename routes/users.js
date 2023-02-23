@@ -108,6 +108,15 @@ router.delete('/:userId', async (req, res) => {
 
     try {
 
+        let rows = await db('users').where('id', userId);
+
+        if (rows.length === 0) {
+
+            return res.status(404).json({
+                success: false
+            });
+        }
+
         await db('users').where('id', userId).delete();
 
         res.json({
