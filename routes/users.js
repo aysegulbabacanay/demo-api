@@ -1,6 +1,7 @@
 const express = require('express');
 const uuid = require('uuid');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
 const router = express.Router();
@@ -24,7 +25,7 @@ router.get('/', async (req, res) => {
             data: rows
         })
 
-    } catch(err) {
+    } catch (err) {
 
         console.error(err);
 
@@ -61,7 +62,7 @@ router.post('/', async (req, res) => {
             success: true
         })
 
-    } catch(err) {
+    } catch (err) {
 
         console.error(err);
 
@@ -88,7 +89,7 @@ router.get('/:userId', async (req, res) => {
             data: _.omit(row, 'password')
         })
 
-    } catch(err) {
+    } catch (err) {
 
         console.error(err);
 
@@ -123,7 +124,7 @@ router.delete('/:userId', async (req, res) => {
             success: true
         })
 
-    } catch(err) {
+    } catch (err) {
 
         console.error(err);
 
@@ -137,5 +138,42 @@ router.delete('/:userId', async (req, res) => {
 /**
  * POST /users/login
  */
+router.post('/login', async (req, res) => {
+
+    let { email, password } = req.body;
+
+    let row = await db('users').where('email', email).first();
+
+    if (!row) {
+
+        console.debug('User not found.')
+
+        return res.status(401).json({
+            success: false
+        });
+    }
+
+    let match = bcrypt.compareSync(password, row.password);
+
+    if (!match) {
+
+        console.debug('Passwords did not match.')
+
+        return res.status(401).json({
+            success: false
+        });
+    }
+
+    let token = jwt.sign({
+        sub: row.id,
+        email: row.email,
+        name: row.name
+    }, process.env.JWT_SECRET);
+
+    res.json({
+        success: true,
+        token
+    })
+})
 
 module.exports = router;
