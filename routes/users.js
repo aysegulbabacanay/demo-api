@@ -1,5 +1,7 @@
 const express = require('express');
 const uuid = require('uuid');
+const bcrypt = require('bcryptjs');
+const _ = require('lodash');
 
 const router = express.Router();
 
@@ -11,8 +13,31 @@ const db = require('../dbConfig');
 router.get('/', async (req, res) => {
 
 
-    // db.from('users').select('*')
+    try {
+
+        let rows = await db.from('users').select('*');
+
+        rows = rows.map(row => _.omit(row, 'password'));
+
+        res.json({
+            success: true,
+            data: rows
+        })
+
+    } catch(err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            error: err
+        })
+    }
 });
+
+/**
+ * GET /users/:userId
+ */
 
 /**
  * POST /users/
@@ -23,10 +48,12 @@ router.post('/', async (req, res) => {
 
     let id = uuid.v4().toString();
 
+    let hashedPassword = bcrypt.hashSync(password);
+
     let userObj = {
+        password: hashedPassword,
         name,
         email,
-        password,
         id
     }
 
@@ -34,7 +61,7 @@ router.post('/', async (req, res) => {
 
         await db('users').insert([userObj]);
 
-        res.json({
+        res.status(201).json({
             success: true
         })
 
@@ -42,7 +69,7 @@ router.post('/', async (req, res) => {
 
         console.error(err);
 
-        res.json({
+        res.status(500).json({
             success: false,
             error: err
         })
